@@ -1,0 +1,299 @@
+const weatherForm = document.getElementById("weatherForm");
+const cityInput = document.getElementById("cityInput");
+const searchButton = document.getElementById("searchButton");
+
+const statusMessage = document.getElementById("statusMessage");
+const weatherSection = document.getElementById("weatherSection");
+
+const cityName = document.getElementById("cityName");
+const localDate = document.getElementById("localDate");
+const temperature = document.getElementById("temperature");
+const weatherDescription = document.getElementById("weatherDescription");
+const feelsLike = document.getElementById("feelsLike");
+const feelsLikeCard = document.getElementById("feelsLikeCard");
+const humidity = document.getElementById("humidity");
+const windSpeed = document.getElementById("windSpeed");
+const conditionCard = document.getElementById("conditionCard");
+const weatherEmoji = document.getElementById("weatherEmoji");
+
+function showStatus(message, isError = false) {
+statusMessage.textContent = message;
+statusMessage.classList.toggle("error", isError);
+}
+
+function getWeatherDetails(code, isDay) {
+const weatherCodes = {
+0: {
+description: "Clear sky",
+day: "☀️",
+night: "🌙"
+},
+1: {
+description: "Mainly clear",
+day: "🌤️",
+night: "🌙"
+},
+2: {
+description: "Partly cloudy",
+day: "⛅",
+night: "☁️"
+},
+3: {
+description: "Overcast",
+day: "☁️",
+night: "☁️"
+},
+45: {
+description: "Foggy",
+day: "🌫️",
+night: "🌫️"
+},
+48: {
+description: "Depositing rime fog",
+day: "🌫️",
+night: "🌫️"
+},
+51: {
+description: "Light drizzle",
+day: "🌦️",
+night: "🌧️"
+},
+53: {
+description: "Moderate drizzle",
+day: "🌦️",
+night: "🌧️"
+},
+55: {
+description: "Dense drizzle",
+day: "🌧️",
+night: "🌧️"
+},
+56: {
+description: "Light freezing drizzle",
+day: "🌧️",
+night: "🌧️"
+},
+57: {
+description: "Dense freezing drizzle",
+day: "🌧️",
+night: "🌧️"
+},
+61: {
+description: "Slight rain",
+day: "🌦️",
+night: "🌧️"
+},
+63: {
+description: "Moderate rain",
+day: "🌧️",
+night: "🌧️"
+},
+65: {
+description: "Heavy rain",
+day: "🌧️",
+night: "🌧️"
+},
+66: {
+description: "Light freezing rain",
+day: "🌧️",
+night: "🌧️"
+},
+67: {
+description: "Heavy freezing rain",
+day: "🌧️",
+night: "🌧️"
+},
+71: {
+description: "Slight snowfall",
+day: "🌨️",
+night: "🌨️"
+},
+73: {
+description: "Moderate snowfall",
+day: "🌨️",
+night: "🌨️"
+},
+75: {
+description: "Heavy snowfall",
+day: "❄️",
+night: "❄️"
+},
+77: {
+description: "Snow grains",
+day: "🌨️",
+night: "🌨️"
+},
+80: {
+description: "Slight rain showers",
+day: "🌦️",
+night: "🌧️"
+},
+81: {
+description: "Moderate rain showers",
+day: "🌧️",
+night: "🌧️"
+},
+82: {
+description: "Violent rain showers",
+day: "⛈️",
+night: "⛈️"
+},
+85: {
+description: "Slight snow showers",
+day: "🌨️",
+night: "🌨️"
+},
+86: {
+description: "Heavy snow showers",
+day: "❄️",
+night: "❄️"
+},
+95: {
+description: "Thunderstorm",
+day: "⛈️",
+night: "⛈️"
+},
+96: {
+description: "Thunderstorm with slight hail",
+day: "⛈️",
+night: "⛈️"
+},
+99: {
+description: "Thunderstorm with heavy hail",
+day: "⛈️",
+night: "⛈️"
+}
+};
+
+return weatherCodes[code] || {
+    description: "Weather information available",
+    day: "🌤️",
+    night: "🌙"
+};
+
+}
+
+function formatDate(dateString) {
+const date = new Date(dateString);
+
+return new Intl.DateTimeFormat("en", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+}).format(date);
+
+}
+
+async function getWeather(city) {
+const trimmedCity = city.trim();
+
+if (!trimmedCity) {
+    showStatus("Please enter a city name.", true);
+    return;
+}
+
+searchButton.disabled = true;
+searchButton.textContent = "Finding...";
+showStatus("Looking for your city's sky... ✨");
+
+try {
+    const geoUrl =
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(trimmedCity) +
+        "&count=1&language=en&format=json";
+
+    const geoResponse = await fetch(geoUrl);
+
+    if (!geoResponse.ok) {
+        throw new Error("Unable to search for this city right now.");
+    }
+
+    const geoData = await geoResponse.json();
+
+    if (!geoData.results || geoData.results.length === 0) {
+        throw new Error("City not found. Please check the spelling.");
+    }
+
+    const place = geoData.results[0];
+
+    const weatherUrl =
+        "https://api.open-meteo.com/v1/forecast" +
+        "?latitude=" + place.latitude +
+        "&longitude=" + place.longitude +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m" +
+        "&timezone=auto";
+
+    const weatherResponse = await fetch(weatherUrl);
+
+    if (!weatherResponse.ok) {
+        throw new Error("Weather data is temporarily unavailable.");
+    }
+
+    const weatherData = await weatherResponse.json();
+    const current = weatherData.current;
+
+    if (!current) {
+        throw new Error("No current weather data was returned.");
+    }
+
+    const details = getWeatherDetails(
+        current.weather_code,
+        current.is_day
+    );
+
+    const placeLabel = [place.name, place.admin1, place.country]
+        .filter((value, index, array) =>
+            value && array.indexOf(value) === index
+        )
+        .join(", ");
+
+    cityName.textContent = placeLabel;
+    localDate.textContent = formatDate(current.time);
+
+    temperature.textContent =
+        Math.round(current.temperature_2m);
+
+    weatherDescription.textContent = details.description;
+
+    feelsLike.textContent =
+        "Feels like " +
+        Math.round(current.apparent_temperature) +
+        "°C";
+
+    feelsLikeCard.textContent =
+        Math.round(current.apparent_temperature) + "°C";
+
+    humidity.textContent =
+        current.relative_humidity_2m + "%";
+
+    windSpeed.textContent =
+        Number(current.wind_speed_10m).toFixed(1) + " km/h";
+
+    conditionCard.textContent = details.description;
+    weatherEmoji.textContent =
+        current.is_day ? details.day : details.night;
+
+    weatherSection.hidden = false;
+    showStatus("Your sky has been found. ✨");
+
+} catch (error) {
+    showStatus(
+        error.message ||
+        "Something went wrong. Please try again.",
+        true
+    );
+} finally {
+    searchButton.disabled = false;
+    searchButton.innerHTML = 'Find my sky <span>↗</span>';
+}
+
+}
+
+weatherForm.addEventListener("submit", function (event) {
+event.preventDefault();
+getWeather(cityInput.value);
+});
+
+// Show Jaipur's weather when the website first opens.
+getWeather("Jaipur");
