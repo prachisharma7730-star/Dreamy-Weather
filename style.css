@@ -1,6 +1,7 @@
-/* ==========================================
-   DREAMY WEATHER — MIDNIGHT SUNSET THEME
-   ========================================== */
+/* =========================================
+
+1. COLOUR PALETTE
+   ========================================= */
 
 :root {
 --lavender: #a99bd8;
@@ -9,7 +10,13 @@
 --muted: #858099;
 --glass: rgba(255, 255, 255, 0.66);
 --white: #ffffff;
+--soft-pink: #f7e8f1;
+--border: rgba(169, 155, 216, 0.24);
 }
+
+/* =========================================
+2. BASIC RESET
+========================================= */
 
 * {
   margin: 0;
@@ -27,60 +34,39 @@ scroll-behavior: smooth;
 
 body {
 min-height: 100vh;
-overflow-x: hidden;
-position: relative;
-font-family: "DM Sans", sans-serif;
+font-family: Georgia, "Times New Roman", serif;
 color: var(--ink);
 
 background:
-    radial-gradient(ellipse at 10% 10%, #f7e6fa 0%, transparent 38%),
-    radial-gradient(ellipse at 90% 20%, #d8e8ff 0%, transparent 38%),
-    radial-gradient(ellipse at 50% 90%, #e5ddff 0%, transparent 45%),
-    linear-gradient(135deg, #fbf7ff, #f1f4ff 55%, #fdf0f7);
+    radial-gradient(
+        circle at 10% 10%,
+        rgba(225, 207, 239, 0.65),
+        transparent 35%
+    ),
+    radial-gradient(
+        circle at 90% 80%,
+        rgba(247, 221, 235, 0.75),
+        transparent 38%
+    ),
+    linear-gradient(
+        135deg,
+        #fcf9ff 0%,
+        #f4eefb 48%,
+        #fff5f8 100%
+    );
+
+display: flex;
+flex-direction: column;
 
 }
 
-body::before {
-content: "";
-position: fixed;
-inset: 0;
-pointer-events: none;
-z-index: -1;
-opacity: 0.3;
+/* =========================================
+3. HEADER
+========================================= */
 
-background-image:
-    radial-gradient(#ffffff 1.5px, transparent 1.5px);
-background-size: 42px 42px;
-
-}
-
-.sky-glow {
-position: fixed;
-width: 300px;
-height: 300px;
-border-radius: 50%;
-filter: blur(85px);
-opacity: 0.45;
-pointer-events: none;
-z-index: -1;
-}
-
-.glow-one {
-background: #e3c9ff;
-top: 10%;
-left: -150px;
-}
-
-.glow-two {
-background: #c6e6ff;
-right: -150px;
-top: 40%;
-}
-
-.navbar {
-width: min(1120px, 90%);
-margin: auto;
-padding: 28px 0;
+.site-header {
+width: 100%;
+padding: 25px 7%;
 display: flex;
 align-items: center;
 justify-content: space-between;
@@ -88,413 +74,456 @@ gap: 20px;
 }
 
 .brand {
-display: flex;
+display: inline-flex;
 align-items: center;
 gap: 10px;
+
 color: var(--deep-purple);
 text-decoration: none;
-font-size: 21px;
+
+font-family: Arial, sans-serif;
+font-size: 1.3rem;
 font-weight: 700;
-letter-spacing: -0.8px;
+letter-spacing: -0.5px;
+
 }
 
 .brand-icon {
-font-size: 31px;
+font-size: 1.7rem;
 }
 
-.brand-light {
-font-weight: 400;
-color: #9a8db9;
-}
-
-.nav-caption {
+.header-note {
+font-family: Arial, sans-serif;
+font-size: 0.85rem;
 color: var(--muted);
-font-size: 12px;
-letter-spacing: 0.5px;
 }
 
-.main-container {
-width: min(900px, 90%);
-margin: auto;
+/* =========================================
+4. MAIN LAYOUT
+========================================= */
+
+main {
+flex: 1;
+width: 100%;
 }
 
-.welcome-section {
+.home-screen {
+min-height: 690px;
+padding: 65px 20px 45px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+}
+
+.hero-content {
+width: 100%;
+max-width: 850px;
 text-align: center;
-padding: 60px 0 32px;
 }
 
 .eyebrow {
-color: #9283b9;
-font-size: 10px;
+font-family: Arial, sans-serif;
+font-size: 0.75rem;
 font-weight: 700;
-letter-spacing: 3px;
-margin-bottom: 17px;
+letter-spacing: 4px;
+color: var(--muted);
+margin-bottom: 25px;
 }
 
-.welcome-section h1 {
-font-family: "Playfair Display", serif;
-font-size: clamp(38px, 6vw, 68px);
-line-height: 1.16;
-font-weight: 500;
-letter-spacing: -1.5px;
+.hero-content h1,
+.weather-heading h1 {
+font-size: clamp(2.6rem, 6vw, 5.2rem);
+font-weight: 400;
+line-height: 1.1;
+letter-spacing: -2px;
 }
 
-.welcome-section h1 span {
+.hero-content h1 span {
 display: block;
-color: #9382c7;
+color: var(--lavender);
 font-style: italic;
 }
 
-.welcome-description {
-margin-top: 20px;
+.hero-description {
+margin-top: 25px;
 color: var(--muted);
-font-size: 14px;
-line-height: 1.8;
+font-family: Arial, sans-serif;
+font-size: 1rem;
+line-height: 1.7;
 }
 
-.search-section {
-max-width: 650px;
-margin: 20px auto 25px;
-}
+/* =========================================
+5. SEARCH FORM
+========================================= */
 
-.search-box {
+.search-form {
+width: 100%;
+max-width: 710px;
+margin: 55px auto 0;
+padding: 8px;
+
 display: flex;
 align-items: center;
-gap: 12px;
-padding: 9px;
-background: rgba(255, 255, 255, 0.78);
+gap: 10px;
+
+background: var(--glass);
 border: 1px solid rgba(255, 255, 255, 0.95);
 border-radius: 20px;
-box-shadow: 0 15px 45px rgba(111, 91, 160, 0.12);
-backdrop-filter: blur(18px);
--webkit-backdrop-filter: blur(18px);
-transition: box-shadow 0.3s ease;
+
+box-shadow: 0 15px 45px rgba(98, 86, 143, 0.09);
+
+transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
 }
 
-.search-box:focus-within {
-box-shadow: 0 15px 45px rgba(111, 91, 160, 0.22);
+.search-form:focus-within {
+border-color: var(--lavender);
+box-shadow: 0 15px 45px rgba(98, 86, 143, 0.15);
 }
 
 .search-icon {
-padding-left: 12px;
-font-size: 28px;
-color: #9b8bc4;
+padding-left: 15px;
+color: var(--muted);
+font-family: Arial, sans-serif;
+font-size: 1.5rem;
 }
 
-.search-box input {
-width: 100%;
+.search-form input {
 min-width: 0;
+flex: 1;
+
+padding: 15px 8px;
+
 border: none;
 outline: none;
 background: transparent;
+
 color: var(--ink);
-font: inherit;
-font-size: 14px;
+font-family: Arial, sans-serif;
+font-size: 1rem;
+
 }
 
-.search-box input::placeholder {
-color: #aaa5bc;
+.search-form input::placeholder {
+color: #aaa5ba;
 }
 
-.search-box button {
-flex-shrink: 0;
+.search-form button {
+padding: 17px 24px;
+
 border: none;
 border-radius: 14px;
-padding: 15px 19px;
-background: linear-gradient(135deg, #a99bd8, #8273bb);
-color: white;
-font: inherit;
-font-size: 12px;
-font-weight: 700;
+
+background: linear-gradient(
+    135deg,
+    #a99bd8,
+    #8f7fc3
+);
+
+color: var(--white);
+font-family: Arial, sans-serif;
+font-size: 0.9rem;
+font-weight: 600;
+
 cursor: pointer;
-transition: transform 0.25s, box-shadow 0.25s;
+
+transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
 }
 
-.search-box button:hover {
+.search-form button:hover {
 transform: translateY(-2px);
-box-shadow: 0 8px 20px rgba(130, 115, 187, 0.3);
+box-shadow: 0 8px 20px rgba(98, 86, 143, 0.2);
 }
 
-.search-box button:disabled {
+.search-form button:disabled {
 opacity: 0.65;
 cursor: wait;
+transform: none;
 }
 
-.search-hint {
-text-align: center;
-margin-top: 16px;
-color: #a49bb9;
-font-size: 11px;
-letter-spacing: 0.3px;
-}
+.search-message {
+min-height: 25px;
+margin-top: 15px;
 
-.status-message {
-min-height: 24px;
-margin: 10px 0 15px;
-text-align: center;
-font-size: 13px;
+font-family: Arial, sans-serif;
+font-size: 0.9rem;
 color: var(--deep-purple);
+
 }
 
-.status-message.error {
-color: #b44e70;
+.little-note {
+margin-top: 10px;
+color: var(--muted);
+font-family: Arial, sans-serif;
+font-size: 0.82rem;
 }
 
-.weather-dashboard {
-margin-top: 35px;
-animation: rise-in 0.7s ease both;
+.home-quote {
+margin-top: 85px;
+text-align: center;
+color: var(--muted);
+font-style: italic;
+font-size: 1rem;
+}
+
+/* =========================================
+6. WEATHER RESULTS INTERFACE
+========================================= */
+
+.weather-screen {
+width: min(100% - 40px, 850px);
+margin: 35px auto 70px;
+animation: appear 0.45s ease;
+}
+
+.back-button {
+margin-bottom: 35px;
+padding: 12px 18px;
+
+background: rgba(255, 255, 255, 0.6);
+border: 1px solid var(--border);
+border-radius: 12px;
+
+color: var(--deep-purple);
+font-family: Arial, sans-serif;
+font-size: 0.9rem;
+
+cursor: pointer;
+transition: background 0.2s ease;
+
+}
+
+.back-button:hover {
+background: #ffffff;
 }
 
 .weather-heading {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 20px;
+text-align: center;
+margin-bottom: 30px;
 }
 
 .weather-heading .eyebrow {
-margin-bottom: 8px;
+margin-bottom: 15px;
 }
 
-.weather-heading h2 {
-font-family: "Playfair Display", serif;
-font-size: clamp(27px, 4vw, 37px);
-font-weight: 500;
+.weather-heading h1 {
+font-size: clamp(2.5rem, 6vw, 4rem);
+overflow-wrap: anywhere;
 }
 
-.local-date {
-margin-top: 8px;
-font-size: 12px;
+.result-location {
+margin-top: 12px;
 color: var(--muted);
+font-family: Arial, sans-serif;
+font-size: 0.95rem;
 }
 
-.location-symbol {
-display: grid;
-place-items: center;
-width: 47px;
-height: 47px;
-border-radius: 50%;
-color: var(--deep-purple);
-background: rgba(255, 255, 255, 0.7);
-font-size: 25px;
+/* Main temperature card */
+
+.weather-card {
+padding: 35px;
+border-radius: 28px;
+
+background:
+    radial-gradient(
+        circle at 100% 0%,
+        rgba(225, 207, 239, 0.45),
+        transparent 45%
+    ),
+    rgba(255, 255, 255, 0.75);
+
+border: 1px solid rgba(255, 255, 255, 0.95);
+
+box-shadow: 0 18px 55px rgba(98, 86, 143, 0.10);
+
 }
 
-.hero-weather {
-position: relative;
-min-height: 260px;
-overflow: hidden;
+.weather-main {
 display: flex;
 align-items: center;
 justify-content: space-between;
 gap: 20px;
-padding: 36px 45px;
-border-radius: 30px;
-
-background:
-    radial-gradient(circle at 85% 20%, rgba(255,255,255,.8), transparent 26%),
-    linear-gradient(120deg, #d9d3f8, #c5def8 60%, #f4dff4);
-
-box-shadow: 0 18px 45px rgba(111, 91, 160, 0.13);
-
-}
-
-.hero-weather-content {
-position: relative;
-z-index: 2;
 }
 
 .weather-label {
-color: #716493;
-font-size: 10px;
-font-weight: 700;
+font-family: Arial, sans-serif;
+font-size: 0.72rem;
 letter-spacing: 2px;
+color: var(--muted);
 }
 
-.temperature-line {
-display: flex;
-align-items: flex-start;
-margin-top: 10px;
+.weather-main h2 {
+margin-top: 12px;
+font-size: clamp(1.5rem, 4vw, 2.3rem);
+font-weight: 400;
 }
 
-#temperature {
-font-family: "Playfair Display", serif;
-font-size: clamp(65px, 10vw, 95px);
-line-height: 1.15;
-letter-spacing: -5px;
+.local-time {
+margin-top: 12px;
+font-family: Arial, sans-serif;
+color: var(--muted);
+font-size: 0.85rem;
+}
+
+.weather-symbol {
+font-family: Arial, sans-serif;
+font-size: clamp(3.5rem, 9vw, 6rem);
+}
+
+.temperature {
+margin-top: 25px;
+color: var(--deep-purple);
+font-family: Arial, sans-serif;
+font-size: clamp(4.5rem, 12vw, 7rem);
+font-weight: 300;
+line-height: 1;
 }
 
 .degree-symbol {
-margin: 13px 0 0 6px;
-font-size: 25px;
-}
-
-.hero-weather-content h3 {
-margin-top: 7px;
-font-size: 19px;
-font-weight: 600;
-text-transform: capitalize;
+font-size: 0.55em;
+vertical-align: top;
 }
 
 .feels-like {
-margin-top: 8px;
-color: #716b89;
-font-size: 12px;
+margin-top: 12px;
+color: var(--muted);
+font-family: Arial, sans-serif;
+font-size: 0.95rem;
 }
 
-.weather-art {
-position: relative;
+/* Weather detail cards */
+
+.details-grid {
 display: grid;
-place-items: center;
-width: 200px;
-height: 180px;
-flex-shrink: 0;
-}
-
-#weatherEmoji {
-position: relative;
-z-index: 2;
-font-size: clamp(80px, 12vw, 120px);
-filter: drop-shadow(0 15px 20px rgba(100, 93, 151, 0.17));
-animation: float 4s ease-in-out infinite;
-}
-
-.orbit {
-position: absolute;
-width: 155px;
-height: 155px;
-border: 1px solid rgba(255, 255, 255, 0.7);
-border-radius: 50%;
-}
-
-.orbit-two {
-width: 185px;
-height: 185px;
-border-style: dashed;
-opacity: 0.6;
-}
-
-.details-heading {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin: 35px 0 18px;
-}
-
-.details-heading h3 {
-font-family: "Playfair Display", serif;
-font-size: 21px;
-font-weight: 500;
-}
-
-.details-heading span {
-color: #a99bd8;
-font-size: 25px;
-}
-
-.weather-details {
-display: grid;
-grid-template-columns: repeat(4, minmax(0, 1fr));
-gap: 15px;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 16px;
+margin-top: 20px;
 }
 
 .detail-card {
-padding: 22px 17px;
-min-width: 0;
-border: 1px solid rgba(255, 255, 255, 0.8);
-border-radius: 22px;
-background: var(--glass);
-box-shadow: 0 10px 30px rgba(111, 91, 160, 0.07);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-transition: transform 0.25s, box-shadow 0.25s;
-}
+display: flex;
+align-items: center;
+gap: 17px;
 
-.detail-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 15px 35px rgba(111, 91, 160, 0.13);
+padding: 23px;
+border-radius: 20px;
+
+background: rgba(255, 255, 255, 0.72);
+border: 1px solid rgba(255, 255, 255, 0.95);
+
+box-shadow: 0 10px 30px rgba(98, 86, 143, 0.05);
+
 }
 
 .detail-icon {
-display: inline-block;
-margin-bottom: 15px;
-font-size: 23px;
+font-family: Arial, sans-serif;
+font-size: 1.8rem;
 }
 
-.detail-card p {
+.detail-label {
 color: var(--muted);
-font-size: 11px;
+font-family: Arial, sans-serif;
+font-size: 0.85rem;
 }
 
-.detail-card h3 {
-margin-top: 8px;
-font-size: clamp(16px, 2vw, 22px);
+.detail-value {
+margin-top: 7px;
+color: var(--ink);
+font-family: Arial, sans-serif;
+font-size: 1.4rem;
+font-weight: 600;
 overflow-wrap: anywhere;
 }
 
-.detail-note {
-display: block;
-margin-top: 8px;
-color: #a49bb9;
-font-size: 10px;
-line-height: 1.5;
+.detail-unit {
+font-size: 0.8rem;
+font-weight: 400;
 }
 
-.weather-footer {
-margin: 28px 0 15px;
+.weather-note {
+margin-top: 30px;
 text-align: center;
-color: #9386b4;
-font-family: "Playfair Display", serif;
-font-size: 15px;
+color: var(--muted);
 font-style: italic;
 }
 
-.bottom-note {
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 12px;
-padding: 55px 0 40px;
-color: #9386b4;
-font-family: "Playfair Display", serif;
-font-size: 13px;
-font-style: italic;
+.weather-source {
+margin-top: 18px;
 text-align: center;
+font-family: Arial, sans-serif;
+font-size: 0.8rem;
+color: var(--muted);
 }
 
-.bottom-note span {
-color: #b6a5df;
-}
+/* =========================================
+7. FOOTER
+========================================= */
 
 .site-footer {
-padding: 20px;
+width: 100%;
+padding: 25px 15px 30px;
 text-align: center;
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 2px;
-color: #a29ab9;
-border-top: 1px solid rgba(255, 255, 255, 0.6);
-}
 
-.site-footer span {
-padding: 0 5px;
-color: #b6a5df;
-}
-
-@keyframes float {
-0%, 100% {
-transform: translateY(0) rotate(-3deg);
-}
-
-50% {
-    transform: translateY(-12px) rotate(3deg);
-}
+border-top: 1px solid rgba(169, 155, 216, 0.12);
+color: var(--muted);
 
 }
 
-@keyframes rise-in {
+.site-footer > p:first-child {
+font-family: Arial, sans-serif;
+font-size: 0.7rem;
+letter-spacing: 3px;
+}
+
+.footer-credit {
+margin-top: 12px;
+font-family: Arial, sans-serif;
+font-size: 0.78rem;
+}
+
+.footer-credit a {
+color: var(--deep-purple);
+}
+
+/* =========================================
+8. ACCESSIBILITY
+========================================= */
+
+.visually-hidden {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+outline: 3px solid var(--lavender);
+outline-offset: 3px;
+}
+
+/* =========================================
+9. ANIMATION
+========================================= */
+
+@keyframes appear {
 from {
 opacity: 0;
-transform: translateY(18px);
+transform: translateY(12px);
 }
 
 to {
@@ -504,139 +533,104 @@ to {
 
 }
 
-@media (max-width: 700px) {
-.navbar {
-padding: 22px 0;
-}
+/* =========================================
+10. RESPONSIVE DESIGN
+========================================= */
 
-.nav-caption {
-    font-size: 10px;
-    text-align: right;
-}
+@media (max-width: 600px) {
 
-.welcome-section {
-    padding-top: 45px;
-}
-
-.welcome-description {
-    max-width: 320px;
-    margin: 18px auto 0;
-}
-
-.search-box {
-    gap: 6px;
-    border-radius: 16px;
-}
-
-.search-box button {
-    padding: 14px 12px;
-    font-size: 11px;
-}
-
-.hero-weather {
-    min-height: 225px;
-    padding: 25px;
-    border-radius: 24px;
-}
-
-.weather-art {
-    width: 125px;
-    height: 145px;
-}
-
-.orbit {
-    width: 110px;
-    height: 110px;
-}
-
-.orbit-two {
-    width: 135px;
-    height: 135px;
-}
-
-.weather-details {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.detail-card {
+.site-header {
     padding: 20px;
+    flex-wrap: wrap;
 }
 
-}
-
-@media (max-width: 420px) {
 .brand {
-gap: 6px;
-font-size: 17px;
+    font-size: 1.1rem;
 }
 
-.brand-icon {
-    font-size: 25px;
+.header-note {
+    font-size: 0.75rem;
 }
 
-.nav-caption {
-    max-width: 115px;
-    line-height: 1.5;
+.home-screen {
+    min-height: 600px;
+    padding: 45px 20px;
+}
+
+.hero-content h1 {
+    letter-spacing: -1px;
+}
+
+.eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+}
+
+.search-form {
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 35px;
+    padding: 8px;
 }
 
 .search-icon {
-    padding-left: 6px;
-    font-size: 22px;
+    padding-left: 10px;
 }
 
-.search-box input {
-    font-size: 12px;
+.search-form input {
+    flex-basis: calc(100% - 60px);
+    padding: 13px 5px;
 }
 
-.search-box button {
-    padding: 13px 9px;
-    font-size: 10px;
+.search-form button {
+    width: 100%;
+    padding: 15px;
 }
 
-.hero-weather {
-    padding: 20px 16px;
-    gap: 5px;
+.home-quote {
+    margin-top: 60px;
+    line-height: 1.7;
 }
 
-#temperature {
-    font-size: 62px;
+.weather-screen {
+    width: calc(100% - 30px);
+    margin-top: 20px;
 }
 
-.weather-art {
-    width: 90px;
-    height: 115px;
+.weather-card {
+    padding: 25px 20px;
+    border-radius: 22px;
 }
 
-#weatherEmoji {
-    font-size: 72px;
+.weather-main {
+    align-items: flex-start;
 }
 
-.orbit {
-    width: 80px;
-    height: 80px;
-}
-
-.orbit-two {
-    width: 100px;
-    height: 100px;
-}
-
-.hero-weather-content h3 {
-    font-size: 16px;
+.details-grid {
+    gap: 10px;
 }
 
 .detail-card {
-    padding: 17px 14px;
+    padding: 16px 12px;
+    gap: 10px;
+    align-items: flex-start;
 }
 
+.detail-icon {
+    font-size: 1.4rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-*, *::before, *::after {
-animation-duration: 0.01ms !important;
-animation-iteration-count: 1 !important;
-scroll-behavior: auto !important;
-transition-duration: 0.01ms !important;
+.detail-label {
+    font-size: 0.75rem;
 }
+
+.detail-value {
+    font-size: 1.15rem;
+}
+
+.site-footer > p:first-child {
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+}
+
 }
