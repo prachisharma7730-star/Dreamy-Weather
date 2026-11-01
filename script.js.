@@ -1,529 +1,217 @@
-// =======================================
-// DREAMY WEATHER - JAVASCRIPT
-// =======================================
+// ==================================================
+// DREAMY WEATHER
+// JavaScript and Open-Meteo Weather API
+// ==================================================
 
-const searchInput = document.querySelector(
-    'input[placeholder*="city" i]'
-);
 
-const searchButton = [...document.querySelectorAll("button")]
-    .find(button =>
-        button.textContent.toLowerCase().includes("find my sky")
-    );
+// 1. CONNECT HTML ELEMENTS
 
-// Check whether the search elements exist.
-if (!searchInput || !searchButton) {
-    console.error(
-        "Weather search elements were not found. Check index.html."
-    );
-}
+const homeScreen = document.getElementById("home-screen");
+const weatherScreen = document.getElementById("weather-screen");
 
-// =======================================
-// WEATHER ICONS
-// =======================================
+const weatherForm = document.getElementById("weather-form");
+const cityInput = document.getElementById("city-input");
+const searchButton = document.getElementById("search-button");
 
-function getWeatherIcon(code, isDay) {
-    if (code === 0) {
-        return isDay ? "☀️" : "🌙";
-    }
+const searchMessage = document.getElementById("search-message");
+const backButton = document.getElementById("back-button");
+const homeLink = document.getElementById("home-link");
 
-    if (code === 1 || code === 2) {
-        return isDay ? "🌤️" : "☁️";
-    }
 
-    if (code === 3) {
-        return "☁️";
-    }
+// 2. WEATHER API ADDRESSES
 
-    if ([45, 48].includes(code)) {
-        return "🌫️";
-    }
+const GEOCODING_API =
+    "https://geocoding-api.open-meteo.com/v1/search";
 
-    if ([51, 53, 55, 56, 57].includes(code)) {
-        return "🌦️";
-    }
+const WEATHER_API =
+    "https://api.open-meteo.com/v1/forecast";
 
-    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
-        return "🌧️";
-    }
 
-    if ([71, 73, 75, 77, 85, 86].includes(code)) {
-        return "❄️";
-    }
+// 3. WEATHER DESCRIPTIONS AND ICONS
 
-    if ([95, 96, 99].includes(code)) {
-        return "⛈️";
-    }
+function getWeatherDetails(code, isDay) {
 
-    return "🌥️";
-}
+    const weatherConditions = {
 
-// =======================================
-// WEATHER DESCRIPTION
-// =======================================
+        0: {
+            description: "Clear Sky",
+            day: "☀️",
+            night: "🌙"
+        },
 
-function getWeatherDescription(code) {
-    const descriptions = {
-        0: "Clear sky",
-        1: "Mainly clear",
-        2: "Partly cloudy",
-        3: "Overcast",
-        45: "Foggy",
-        48: "Depositing rime fog",
-        51: "Light drizzle",
-        53: "Moderate drizzle",
-        55: "Dense drizzle",
-        56: "Freezing drizzle",
-        57: "Dense freezing drizzle",
-        61: "Slight rain",
-        63: "Moderate rain",
-        65: "Heavy rain",
-        66: "Light freezing rain",
-        67: "Heavy freezing rain",
-        71: "Slight snowfall",
-        73: "Moderate snowfall",
-        75: "Heavy snowfall",
-        77: "Snow grains",
-        80: "Rain showers",
-        81: "Moderate rain showers",
-        82: "Violent rain showers",
-        85: "Snow showers",
-        86: "Heavy snow showers",
-        95: "Thunderstorm",
-        96: "Thunderstorm with hail",
-        99: "Severe thunderstorm with hail"
+        1: {
+            description: "Mainly Clear",
+            day: "🌤️",
+            night: "🌙"
+        },
+
+        2: {
+            description: "Partly Cloudy",
+            day: "⛅",
+            night: "☁️"
+        },
+
+        3: {
+            description: "Overcast",
+            day: "☁️",
+            night: "☁️"
+        },
+
+        45: {
+            description: "Foggy",
+            day: "🌫️",
+            night: "🌫️"
+        },
+
+        48: {
+            description: "Depositing Rime Fog",
+            day: "🌫️",
+            night: "🌫️"
+        },
+
+        51: {
+            description: "Light Drizzle",
+            day: "🌦️",
+            night: "🌧️"
+        },
+
+        53: {
+            description: "Moderate Drizzle",
+            day: "🌦️",
+            night: "🌧️"
+        },
+
+        55: {
+            description: "Dense Drizzle",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        56: {
+            description: "Light Freezing Drizzle",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        57: {
+            description: "Dense Freezing Drizzle",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        61: {
+            description: "Slight Rain",
+            day: "🌦️",
+            night: "🌧️"
+        },
+
+        63: {
+            description: "Moderate Rain",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        65: {
+            description: "Heavy Rain",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        66: {
+            description: "Light Freezing Rain",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        67: {
+            description: "Heavy Freezing Rain",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        71: {
+            description: "Slight Snowfall",
+            day: "🌨️",
+            night: "🌨️"
+        },
+
+        73: {
+            description: "Moderate Snowfall",
+            day: "🌨️",
+            night: "🌨️"
+        },
+
+        75: {
+            description: "Heavy Snowfall",
+            day: "❄️",
+            night: "❄️"
+        },
+
+        77: {
+            description: "Snow Grains",
+            day: "❄️",
+            night: "❄️"
+        },
+
+        80: {
+            description: "Slight Rain Showers",
+            day: "🌦️",
+            night: "🌧️"
+        },
+
+        81: {
+            description: "Moderate Rain Showers",
+            day: "🌧️",
+            night: "🌧️"
+        },
+
+        82: {
+            description: "Violent Rain Showers",
+            day: "⛈️",
+            night: "⛈️"
+        },
+
+        85: {
+            description: "Slight Snow Showers",
+            day: "🌨️",
+            night: "🌨️"
+        },
+
+        86: {
+            description: "Heavy Snow Showers",
+            day: "❄️",
+            night: "❄️"
+        },
+
+        95: {
+            description: "Thunderstorm",
+            day: "⛈️",
+            night: "⛈️"
+        },
+
+        96: {
+            description: "Thunderstorm with Slight Hail",
+            day: "⛈️",
+            night: "⛈️"
+        },
+
+        99: {
+            description: "Thunderstorm with Heavy Hail",
+            day: "⛈️",
+            night: "⛈️"
+        }
+
     };
 
-    return descriptions[code] || "Weather information available";
-}
+    const condition = weatherConditions[code];
 
-// =======================================
-// CREATE THE WEATHER RESULTS SCREEN
-// =======================================
-
-const weatherStyles = document.createElement("style");
-
-weatherStyles.textContent = `
-    .sky-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        overflow-y: auto;
-        background:
-            radial-gradient(
-                circle at 15% 15%,
-                rgba(204, 190, 255, 0.8),
-                transparent 35%
-            ),
-            radial-gradient(
-                circle at 85% 80%,
-                rgba(255, 215, 232, 0.8),
-                transparent 35%
-            ),
-            linear-gradient(135deg, #f8f5ff, #fff8fb, #edf2ff);
-        padding: 30px 18px;
-        box-sizing: border-box;
-        color: #34304c;
-        font-family: inherit;
+    if (!condition) {
+        return {
+            description: "Weather information unavailable",
+            icon: "🌌"
+        };
     }
 
-    .sky-container {
-        max-width: 760px;
-        margin: 0 auto;
-    }
-
-    .sky-back {
-        border: 1px solid rgba(130, 115, 175, 0.25);
-        border-radius: 30px;
-        padding: 11px 20px;
-        background: rgba(255, 255, 255, 0.75);
-        color: #51446f;
-        cursor: pointer;
-        font-size: 14px;
-        margin-bottom: 30px;
-    }
-
-    .sky-back:hover {
-        background: white;
-        transform: translateY(-1px);
-    }
-
-    .sky-heading {
-        text-align: center;
-        margin: 20px 0 30px;
-    }
-
-    .sky-heading h1 {
-        font-size: clamp(30px, 6vw, 48px);
-        font-weight: 500;
-        margin: 10px 0;
-        letter-spacing: -1px;
-    }
-
-    .sky-location {
-        color: #77718f;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        font-size: 12px;
-    }
-
-    .sky-card {
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(255, 255, 255, 0.95);
-        border-radius: 30px;
-        padding: 35px 22px;
-        text-align: center;
-        box-shadow: 0 20px 70px rgba(91, 76, 140, 0.12);
-        backdrop-filter: blur(15px);
-    }
-
-    .sky-icon {
-        font-size: 85px;
-        margin: 5px 0 10px;
-    }
-
-    .sky-temperature {
-        font-size: clamp(64px, 12vw, 90px);
-        font-weight: 400;
-        letter-spacing: -5px;
-        margin: 0;
-    }
-
-    .sky-condition {
-        font-size: 20px;
-        color: #77718f;
-        margin: 10px 0 25px;
-    }
-
-    .sky-time {
-        font-size: 14px;
-        color: #77718f;
-        margin-bottom: 25px;
-    }
-
-    .sky-stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 25px;
-    }
-
-    .sky-stat {
-        background: rgba(243, 239, 255, 0.85);
-        padding: 20px 8px;
-        border-radius: 18px;
-        overflow-wrap: anywhere;
-    }
-
-    .sky-stat-icon {
-        font-size: 25px;
-    }
-
-    .sky-stat-label {
-        display: block;
-        font-size: 12px;
-        color: #77718f;
-        margin: 9px 0;
-    }
-
-    .sky-stat-value {
-        font-size: 17px;
-        font-weight: 600;
-    }
-
-    .sky-note {
-        text-align: center;
-        color: #77718f;
-        font-size: 12px;
-        margin-top: 25px;
-        line-height: 1.7;
-    }
-
-    .sky-message {
-        background: rgba(255, 255, 255, 0.85);
-        padding: 25px;
-        border-radius: 20px;
-        text-align: center;
-        line-height: 1.7;
-    }
-
-    .sky-loading {
-        animation: sky-pulse 1.3s ease-in-out infinite alternate;
-    }
-
-    @keyframes sky-pulse {
-        from { opacity: 0.45; }
-        to { opacity: 1; }
-    }
-
-    @media (max-width: 480px) {
-        .sky-stats {
-            grid-template-columns: 1fr;
-        }
-
-        .sky-card {
-            padding: 25px 16px;
-        }
-
-        .sky-stat {
-            padding: 15px;
-        }
-    }
-`;
-
-document.head.appendChild(weatherStyles);
-
-let weatherOverlay = null;
-
-// =======================================
-// SHOW A NEW WEATHER SCREEN
-// =======================================
-
-function showWeatherScreen(content) {
-    if (weatherOverlay) {
-        weatherOverlay.remove();
-    }
-
-    weatherOverlay = document.createElement("div");
-    weatherOverlay.className = "sky-overlay";
-
-    weatherOverlay.innerHTML = `
-        <div class="sky-container">
-            <button class="sky-back" id="skyBack">
-                ← Back to my sky
-            </button>
-
-            <div id="skyContent">
-                ${content}
-            </div>
-
-            <p class="sky-note">
-                DREAMY WEATHER · YOUR SKY, YOUR STORY
-                <br>
-                Weather data provided by Open-Meteo.
-            </p>
-        </div>
-    `;
-
-    document.body.appendChild(weatherOverlay);
-
-    document.getElementById("skyBack").addEventListener("click", () => {
-        weatherOverlay.remove();
-        weatherOverlay = null;
-    });
-
-    weatherOverlay.scrollTop = 0;
-}
-
-// =======================================
-// SEARCH FOR A CITY
-// =======================================
-
-async function searchWeather() {
-    const city = searchInput.value.trim();
-
-    if (!city) {
-        searchInput.focus();
-        alert("Please enter a city name first. ✨");
-        return;
-    }
-
-    searchButton.disabled = true;
-    searchButton.style.opacity = "0.6";
-
-    showWeatherScreen(`
-        <div class="sky-message sky-loading">
-            <div style="font-size:55px">☁️</div>
-            <h2>Finding your sky...</h2>
-            <p>Looking for the weather in ${escapeHTML(city)}.</p>
-        </div>
-    `);
-
-    try {
-        // STEP 1: Find the city's geographical coordinates.
-
-        const geoURL =
-            "https://geocoding-api.open-meteo.com/v1/search" +
-            "?name=" + encodeURIComponent(city) +
-            "&count=10&language=en&format=json";
-
-        const geoResponse = await fetch(geoURL);
-
-        if (!geoResponse.ok) {
-            throw new Error("Could not search for this city.");
-        }
-
-        const geoData = await geoResponse.json();
-
-        if (!geoData.results || geoData.results.length === 0) {
-            throw new Error(
-                "We couldn't find that city. Please check its spelling."
-            );
-        }
-
-        // Prefer a result whose name matches the entered city.
-
-        const location =
-            geoData.results.find(
-                place => place.name.toLowerCase() === city.toLowerCase()
-            ) || geoData.results[0];
-
-        // STEP 2: Get the current weather for that location.
-
-        const weatherURL =
-            "https://api.open-meteo.com/v1/forecast" +
-            "?latitude=" + location.latitude +
-            "&longitude=" + location.longitude +
-            "&current=temperature_2m,relative_humidity_2m," +
-            "apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m" +
-            "&timezone=auto";
-
-        const weatherResponse = await fetch(weatherURL);
-
-        if (!weatherResponse.ok) {
-            throw new Error("Weather data is temporarily unavailable.");
-        }
-
-        const weatherData = await weatherResponse.json();
-
-        if (!weatherData.current) {
-            throw new Error("No current weather data was returned.");
-        }
-
-        // STEP 3: Display the weather.
-
-        displayWeather(location, weatherData);
-
-    } catch (error) {
-        console.error("Weather search error:", error);
-
-        showWeatherScreen(`
-            <div class="sky-message">
-                <div style="font-size:55px">🌧️</div>
-                <h2>We couldn't find your sky.</h2>
-                <p>${escapeHTML(error.message)}</p>
-                <p>Please check your internet connection and try again.</p>
-            </div>
-        `);
-
-    } finally {
-        searchButton.disabled = false;
-        searchButton.style.opacity = "1";
-    }
-}
-
-// =======================================
-// DISPLAY THE WEATHER RESULTS
-// =======================================
-
-function displayWeather(location, data) {
-    const current = data.current;
-
-    const icon = getWeatherIcon(
-        current.weather_code,
-        current.is_day === 1
-    );
-
-    const condition = getWeatherDescription(current.weather_code);
-
-    const temperature = Math.round(current.temperature_2m);
-
-    const feelsLike = Math.round(current.apparent_temperature);
-
-    const humidity = current.relative_humidity_2m;
-
-    const windSpeed = current.wind_speed_10m;
-
-    const cityName = location.name;
-
-    const region = [location.admin1, location.country]
-        .filter(Boolean)
-        .filter((value, index, array) =>
-            array.indexOf(value) === index
-        )
-        .join(", ");
-
-    // The API provides the local time for the selected location.
-    const localTime = current.time
-        ? current.time.replace("T", " ")
-        : "Unavailable";
-
-    const timeZone = data.timezone || "Local time";
-
-    showWeatherScreen(`
-        <div class="sky-heading">
-            <div class="sky-location">YOUR PERSONAL SKY DIARY</div>
-
-            <h1>${escapeHTML(cityName)}</h1>
-
-            <p>${escapeHTML(region)}</p>
-        </div>
-
-        <div class="sky-card">
-            <div class="sky-icon">${icon}</div>
-
-            <p class="sky-temperature">
-                ${temperature}°
-            </p>
-
-            <p class="sky-condition">
-                ${escapeHTML(condition)}
-            </p>
-
-            <p class="sky-time">
-                🕰️ Local time: ${escapeHTML(localTime)}
-                <br>
-                ${escapeHTML(timeZone)}
-            </p>
-
-            <div class="sky-stats">
-                <div class="sky-stat">
-                    <div class="sky-stat-icon">🌡️</div>
-                    <span class="sky-stat-label">Feels like</span>
-                    <span class="sky-stat-value">${feelsLike}°C</span>
-                </div>
-
-                <div class="sky-stat">
-                    <div class="sky-stat-icon">💧</div>
-                    <span class="sky-stat-label">Humidity</span>
-                    <span class="sky-stat-value">${humidity}%</span>
-                </div>
-
-                <div class="sky-stat">
-                    <div class="sky-stat-icon">🍃</div>
-                    <span class="sky-stat-label">Wind speed</span>
-                    <span class="sky-stat-value">${windSpeed} km/h</span>
-                </div>
-            </div>
-        </div>
-    `);
-}
-
-// =======================================
-// SAFELY DISPLAY USER-ENTERED TEXT
-// =======================================
-
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[character]);
-}
-
-// =======================================
-// CONNECT THE SEARCH BUTTON
-// =======================================
-
-if (searchButton && searchInput) {
-    searchButton.addEventListener("click", searchWeather);
-
-    searchInput.addEventListener("keydown", event => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            searchWeather();
-        }
-    });
-}
+    return {
+        description: condition.description,
+        icon: isDay ? condition
