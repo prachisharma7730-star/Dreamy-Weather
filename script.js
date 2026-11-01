@@ -38,7 +38,7 @@ const weatherSource = document.getElementById("weather-source");
 
 // 2. OPENWEATHER API CONFIGURATION
 
-const API_KEY = "PASTE_YOUR_OPENWEATHER_API_KEY_HERE";
+const API_KEY = "98acb7b8524e334ae5931996cbd1fc65";
 
 const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather";
 
