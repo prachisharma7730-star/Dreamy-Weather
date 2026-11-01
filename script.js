@@ -92,10 +92,8 @@ function getWeatherIcon(weatherCode, iconCode) {
 
 async function getWeather(city) {
 
-    const url =
-        `${WEATHER_API}?q=${encodeURIComponent(city)}` +
-        `&appid=${API_KEY}&units=metric`;
-
+   const url =
+  `${WEATHER_API}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
     const response = await fetch(url);
 
     const data = await response.json();
