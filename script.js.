@@ -40,8 +40,7 @@ const weatherSource = document.getElementById("weather-source");
 
 const API_KEY = "PASTE_YOUR_OPENWEATHER_API_KEY_HERE";
 
-const WEATHER_API =
-    "https://api.openweathermap.org/data/2.5/weather";
+const WEATHER_API = "https://home.openweathermap.org/api_keys";
 
 
 // 3. GET A WEATHER EMOJI
