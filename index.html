@@ -1,163 +1,234 @@
 <!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dreamy Weather | Your Sky, Your Story</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dreamy Weather | Your Personal Sky Diary</title>
 
 <meta name="description"
-      content="Explore the weather through a dreamy, artistic weather website.">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
-      rel="stylesheet">
+      content="Discover the weather of your favourite city with Dreamy Weather.">
 
 <link rel="stylesheet" href="style.css">
 
-</head><body><div class="sky-glow glow-one"></div>
-<div class="sky-glow glow-two"></div>
+<script src="script.js" defer></script>
 
-<header class="navbar">
-    <a href="#" class="brand">
-        <span class="brand-icon">☁</span>
-        <span>dreamy<span class="brand-light">weather</span></span>
+</head><body><!-- Website Header -->
+<header class="site-header">
+    <a href="#" class="brand" id="home-link">
+        <span class="brand-icon" aria-hidden="true">☁</span>
+        <span>dreamyweather</span>
     </a>
 
-    <span class="nav-caption">A little poetry in the sky ✦</span>
+    <p class="header-note">A little poetry in the sky ✦</p>
 </header>
 
-<main class="main-container">
 
-    <section class="welcome-section">
-        <p class="eyebrow">YOUR PERSONAL SKY DIARY</p>
+<main>
 
-        <h1>
-            Every sky has a
-            <span>story to tell.</span>
-        </h1>
+    <!-- FIRST INTERFACE: HOME PAGE -->
+    <section id="home-screen" class="home-screen">
 
-        <p class="welcome-description">
-            Take a breath, look up, and discover the mood of the sky.
+        <div class="hero-content">
+
+            <p class="eyebrow">YOUR PERSONAL SKY DIARY</p>
+
+            <h1>
+                Every sky has a
+                <span>story to tell.</span>
+            </h1>
+
+            <p class="hero-description">
+                Take a breath, look up, and discover the mood of the sky.
+            </p>
+
+            <!-- City Search Form -->
+            <form id="weather-form" class="search-form">
+
+                <label for="city-input" class="visually-hidden">
+                    Enter a city name
+                </label>
+
+                <span class="search-icon" aria-hidden="true">⌕</span>
+
+                <input
+                    type="text"
+                    id="city-input"
+                    name="city"
+                    placeholder="Enter a city, e.g. Jaipur"
+                    autocomplete="off"
+                    minlength="2"
+                    required
+                >
+
+                <button type="submit" id="search-button">
+                    Find My Sky ↗
+                </button>
+
+            </form>
+
+            <!-- Search status and error messages -->
+            <p id="search-message" class="search-message"
+               role="status" aria-live="polite"></p>
+
+            <p class="little-note">
+                ✦ Somewhere in the world, the sky is changing.
+            </p>
+
+        </div>
+
+        <p class="home-quote">
+            ✧ Made for the ones who find magic in ordinary days. ✧
         </p>
+
     </section>
 
-    <section class="search-section">
-        <form id="weatherForm" class="search-box">
-            <span class="search-icon">⌕</span>
 
-            <input
-                type="text"
-                id="cityInput"
-                placeholder="Enter a city, e.g. Jaipur"
-                aria-label="Enter city name"
-                autocomplete="off"
-                required
-            >
+    <!-- SECOND INTERFACE: WEATHER RESULTS -->
+    <section id="weather-screen" class="weather-screen" hidden>
 
-            <button type="submit" id="searchButton">
-                Find my sky <span>↗</span>
-            </button>
-        </form>
-
-        <p class="search-hint">
-            ✦ Somewhere in the world, the sky is changing.
-        </p>
-    </section>
-
-    <p id="statusMessage" class="status-message" role="status"
-       aria-live="polite"></p>
-
-    <section id="weatherSection" class="weather-dashboard" hidden>
+        <button type="button" id="back-button" class="back-button">
+            ← Back to my sky diary
+        </button>
 
         <div class="weather-heading">
-            <div>
-                <p class="eyebrow">THE SKY RIGHT NOW</p>
-                <h2 id="cityName">Jaipur, India</h2>
-                <p id="localDate" class="local-date"></p>
-            </div>
 
-            <span class="location-symbol">⌖</span>
+            <p class="eyebrow">YOUR SKY, RIGHT NOW</p>
+
+            <h1 id="result-city">Jaipur</h1>
+
+            <p id="result-location" class="result-location">
+                Discovering your sky...
+            </p>
+
         </div>
 
-        <article class="hero-weather">
-            <div class="hero-weather-content">
-                <p class="weather-label">CURRENT WEATHER</p>
 
-                <div class="temperature-line">
-                    <span id="temperature">--</span>
-                    <span class="degree-symbol">°C</span>
+        <!-- Main weather card -->
+        <article class="weather-card">
+
+            <div class="weather-main">
+
+                <div>
+                    <p class="weather-label">THE SKY FEELS LIKE</p>
+
+                    <h2 id="weather-description">
+                        Loading weather...
+                    </h2>
+
+                    <p id="weather-local-time" class="local-time"></p>
                 </div>
 
-                <h3 id="weatherDescription">Looking at the sky...</h3>
+                <div class="weather-symbol"
+                     id="weather-icon"
+                     aria-hidden="true">
+                    ☁️
+                </div>
 
-                <p id="feelsLike" class="feels-like">
-                    Feels like --°C
-                </p>
             </div>
 
-            <div class="weather-art" aria-hidden="true">
-                <span id="weatherEmoji">☁️</span>
-                <span class="orbit orbit-one"></span>
-                <span class="orbit orbit-two"></span>
+            <div class="temperature">
+                <span id="temperature-value">--</span>
+                <span class="degree-symbol">°C</span>
             </div>
+
+            <p id="feels-like" class="feels-like">
+                Feels like --°C
+            </p>
+
         </article>
 
-        <div class="details-heading">
-            <h3>A little more about your sky</h3>
-            <span>✧</span>
+
+        <!-- Additional weather information -->
+        <div class="details-grid">
+
+            <article class="detail-card">
+
+                <span class="detail-icon" aria-hidden="true">💧</span>
+
+                <div>
+                    <p class="detail-label">Humidity</p>
+
+                    <p class="detail-value">
+                        <span id="humidity-value">--</span>%
+                    </p>
+                </div>
+
+            </article>
+
+
+            <article class="detail-card">
+
+                <span class="detail-icon" aria-hidden="true">🍃</span>
+
+                <div>
+                    <p class="detail-label">Wind Speed</p>
+
+                    <p class="detail-value">
+                        <span id="wind-value">--</span>
+                        <span class="detail-unit">km/h</span>
+                    </p>
+                </div>
+
+            </article>
+
+
+            <article class="detail-card">
+
+                <span class="detail-icon" aria-hidden="true">🧭</span>
+
+                <div>
+                    <p class="detail-label">Wind Direction</p>
+
+                    <p class="detail-value" id="wind-direction">
+                        --
+                    </p>
+                </div>
+
+            </article>
+
+
+            <article class="detail-card">
+
+                <span class="detail-icon" aria-hidden="true">🌧️</span>
+
+                <div>
+                    <p class="detail-label">Precipitation</p>
+
+                    <p class="detail-value">
+                        <span id="precipitation-value">--</span>
+                        <span class="detail-unit">mm</span>
+                    </p>
+                </div>
+
+            </article>
+
         </div>
 
-        <div class="weather-details">
 
-            <article class="detail-card">
-                <span class="detail-icon">💧</span>
-                <p>Humidity</p>
-                <h3 id="humidity">--%</h3>
-                <span class="detail-note">Moisture in the air</span>
-            </article>
-
-            <article class="detail-card">
-                <span class="detail-icon">🍃</span>
-                <p>Wind speed</p>
-                <h3 id="windSpeed">-- km/h</h3>
-                <span class="detail-note">A breeze through the sky</span>
-            </article>
-
-            <article class="detail-card">
-                <span class="detail-icon">🌡️</span>
-                <p>Feels like</p>
-                <h3 id="feelsLikeCard">--°C</h3>
-                <span class="detail-note">How the air feels</span>
-            </article>
-
-            <article class="detail-card">
-                <span class="detail-icon">🌤️</span>
-                <p>Condition</p>
-                <h3 id="conditionCard">--</h3>
-                <span class="detail-note">Today's sky mood</span>
-            </article>
-
-        </div>
-
-        <p class="weather-footer">
-            Wherever you are, let the sky inspire you. ✦
+        <p class="weather-note">
+            Your little reminder to pause and look at the sky. ✦
         </p>
 
-    </section>
+        <p id="weather-source" class="weather-source">
+            Weather data provided by Open-Meteo.
+        </p>
 
-    <section class="bottom-note">
-        <span>✧</span>
-        <p>Made for the ones who find magic in ordinary days.</p>
-        <span>✧</span>
     </section>
 
 </main>
 
-<footer class="site-footer">
-    DREAMY WEATHER <span>·</span> YOUR SKY, YOUR STORY
-</footer>
 
-<script src="script.js"></script>
+<!-- Website Footer -->
+<footer class="site-footer">
+
+    <p>DREAMY WEATHER · YOUR SKY, YOUR STORY</p>
+
+    <p class="footer-credit">
+        Weather data by
+        <a href="https://open-meteo.com/"
+           target="_blank"
+           rel="noopener noreferrer">Open-Meteo</a>
+    </p>
+
+</footer>
 
 </body>
 </html>
