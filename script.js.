@@ -1,6 +1,6 @@
 // ========================================
 // DREAMY WEATHER
-// City Search and Weather Display
+// OpenWeather API Integration
 // ========================================
 
 
@@ -18,149 +18,121 @@ const searchMessage = document.getElementById("search-message");
 const backButton = document.getElementById("back-button");
 const homeLink = document.getElementById("home-link");
 
+const cityName = document.getElementById("result-city");
+const cityLocation = document.getElementById("result-location");
 
-// 2. API ADDRESSES
+const weatherIcon = document.getElementById("weather-icon");
+const weatherDescription = document.getElementById("weather-description");
+const weatherLocalTime = document.getElementById("weather-local-time");
 
-const GEOCODING_API =
-    "https://geocoding-api.open-meteo.com/v1/search";
+const temperatureValue = document.getElementById("temperature-value");
+const feelsLike = document.getElementById("feels-like");
+
+const humidityValue = document.getElementById("humidity-value");
+const windValue = document.getElementById("wind-value");
+const windDirection = document.getElementById("wind-direction");
+const precipitationValue = document.getElementById("precipitation-value");
+
+const weatherSource = document.getElementById("weather-source");
+
+
+// 2. OPENWEATHER API CONFIGURATION
+
+const API_KEY = "PASTE_YOUR_OPENWEATHER_API_KEY_HERE";
 
 const WEATHER_API =
-    "https://api.open-meteo.com/v1/forecast";
+    "https://api.openweathermap.org/data/2.5/weather";
 
 
-// 3. WEATHER DESCRIPTIONS AND ICONS
+// 3. GET A WEATHER EMOJI
 
-function getWeatherDetails(code, isDay) {
+function getWeatherIcon(weatherCode, iconCode) {
 
-    if (code === 0) {
-        return {
-            description: "Clear sky",
-            icon: isDay ? "☀️" : "🌙"
-        };
+    const isDay = iconCode && iconCode.endsWith("d");
+
+    if (weatherCode >= 200 && weatherCode < 300) {
+        return "⛈️";
     }
 
-    if (code === 1) {
-        return {
-            description: "Mainly clear",
-            icon: isDay ? "🌤️" : "🌙"
-        };
+    if (weatherCode >= 300 && weatherCode < 400) {
+        return "🌦️";
     }
 
-    if (code === 2) {
-        return {
-            description: "Partly cloudy",
-            icon: isDay ? "⛅" : "☁️"
-        };
+    if (weatherCode >= 500 && weatherCode < 600) {
+        return "🌧️";
     }
 
-    if (code === 3) {
-        return {
-            description: "Overcast skies",
-            icon: "☁️"
-        };
+    if (weatherCode >= 600 && weatherCode < 700) {
+        return "❄️";
     }
 
-    if ([45, 48].includes(code)) {
-        return {
-            description: "Foggy weather",
-            icon: "🌫️"
-        };
+    if (weatherCode >= 700 && weatherCode < 800) {
+        return "🌫️";
     }
 
-    if ([51, 53, 55, 56, 57].includes(code)) {
-        return {
-            description: "Light drizzle",
-            icon: "🌦️"
-        };
+    if (weatherCode === 800) {
+        return isDay ? "☀️" : "🌙";
     }
 
-    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
-        return {
-            description: "Rainy weather",
-            icon: "🌧️"
-        };
+    if (weatherCode === 801) {
+        return isDay ? "🌤️" : "☁️";
     }
 
-    if ([71, 73, 75, 77, 85, 86].includes(code)) {
-        return {
-            description: "Snowy weather",
-            icon: "❄️"
-        };
+    if (weatherCode === 802) {
+        return "⛅";
     }
 
-    if ([95, 96, 99].includes(code)) {
-        return {
-            description: "Thunderstorm",
-            icon: "⛈️"
-        };
+    if (weatherCode === 803 || weatherCode === 804) {
+        return "☁️";
     }
 
-    return {
-        description: "Changing skies",
-        icon: "🌥️"
-    };
+    return "🌥️";
 }
 
 
-// 4. SEARCH FOR A CITY AND GET ITS COORDINATES
+// 4. FETCH WEATHER FOR THE ENTERED CITY
 
-async function findCity(city) {
+async function getWeather(city) {
 
     const url =
-        `${GEOCODING_API}?name=${encodeURIComponent(city)}` +
-        "&count=10&language=en&format=json";
+        `${WEATHER_API}?q=${encodeURIComponent(city)}` +
+        `&appid=${API_KEY}&units=metric`;
 
     const response = await fetch(url);
 
-    if (!response.ok) {
-        throw new Error(
-            "The city search service is unavailable. Please try again."
-        );
-    }
-
     const data = await response.json();
 
-    if (!data.results || data.results.length === 0) {
-        throw new Error(
-            "City not found. Please check the spelling and try again."
-        );
-    }
-
-    // Prefer an exact city-name match when available.
-
-    const exactMatch = data.results.find(
-        place => place.name.toLowerCase() === city.toLowerCase()
-    );
-
-    return exactMatch || data.results[0];
-}
-
-
-// 5. FETCH CURRENT WEATHER DATA
-
-async function getWeather(latitude, longitude) {
-
-    const url =
-        `${WEATHER_API}?latitude=${latitude}` +
-        `&longitude=${longitude}` +
-        "&current=temperature_2m,relative_humidity_2m," +
-        "apparent_temperature,is_day,precipitation," +
-        "weather_code,wind_speed_10m,wind_direction_10m" +
-        "&timezone=auto";
-
-    const response = await fetch(url);
-
     if (!response.ok) {
+
+        if (response.status === 404) {
+            throw new Error(
+                "City not found. Please check the spelling and try again."
+            );
+        }
+
+        if (response.status === 401) {
+            throw new Error(
+                "The API key is invalid or not active yet. " +
+                "Check your OpenWeather account and try again later."
+            );
+        }
+
+        if (response.status === 429) {
+            throw new Error(
+                "Too many weather requests. Please wait and try again."
+            );
+        }
+
         throw new Error(
-            "The weather service is unavailable. Please try again."
+            data.message
+                ? `Weather service error: ${data.message}`
+                : "Unable to retrieve weather information. Please try again."
         );
     }
 
-    const data = await response.json();
-
-    if (!data.current) {
+    if (!data.main || !data.weather || !data.weather.length) {
         throw new Error(
-            "Weather information is unavailable for this city."
+            "The weather information returned was incomplete."
         );
     }
 
@@ -168,112 +140,132 @@ async function getWeather(latitude, longitude) {
 }
 
 
-// 6. DISPLAY WEATHER DETAILS AND SWITCH INTERFACES
+// 5. FORMAT THE CITY'S LOCAL TIME
 
-function displayWeather(place, weatherData) {
+function getLocalObservationTime(weatherData) {
 
-    const current = weatherData.current;
+    const timestamp = weatherData.dt;
+    const timezoneOffset = weatherData.timezone;
 
-    const weather = getWeatherDetails(
-        current.weather_code,
-        current.is_day === 1
+    // OpenWeather provides the observation timestamp in UTC
+    // and the city's timezone offset in seconds.
+
+    const localTimestamp =
+        (timestamp + timezoneOffset) * 1000;
+
+    const date = new Date(localTimestamp);
+
+    return date.toISOString().slice(0, 16).replace("T", " ");
+}
+
+
+// 6. DISPLAY THE WEATHER RESULTS
+
+function displayWeather(data) {
+
+    const currentWeather = data.weather[0];
+    const weatherCode = currentWeather.id;
+
+    // Display city name.
+
+    cityName.textContent = data.name || "Unknown city";
+
+
+    // Display country.
+
+    cityLocation.textContent =
+        data.sys && data.sys.country
+            ? data.sys.country
+            : "Location information unavailable";
+
+
+    // Display weather description.
+
+    weatherDescription.textContent =
+        currentWeather.description
+            .split(" ")
+            .map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            )
+            .join(" ");
+
+
+    // Display weather icon.
+
+    weatherIcon.textContent = getWeatherIcon(
+        weatherCode,
+        currentWeather.icon
     );
 
 
-    // Display city name and location.
+    // Display temperature in Celsius.
 
-    document.getElementById("result-city").textContent =
-        place.name;
-
-    document.getElementById("result-location").textContent =
-        [place.admin1, place.country]
-            .filter(Boolean)
-            .join(", ");
+    temperatureValue.textContent =
+        Math.round(data.main.temp);
 
 
-    // Display weather description and icon.
+    // Display feels-like temperature.
 
-    document.getElementById("weather-icon").textContent =
-        weather.icon;
-
-    document.getElementById("weather-description").textContent =
-        weather.description;
-
-
-    // Display temperature.
-
-    document.getElementById("temperature-value").textContent =
-        Math.round(current.temperature_2m);
-
-    document.getElementById("feels-like").textContent =
-        `Feels like ${Math.round(current.apparent_temperature)}°C`;
+    feelsLike.textContent =
+        `Feels like ${Math.round(data.main.feels_like)}°C`;
 
 
     // Display humidity.
 
-    document.getElementById("humidity-value").textContent =
-        current.relative_humidity_2m;
+    humidityValue.textContent =
+        data.main.humidity;
 
 
-    // Display wind speed.
+    // Display wind speed in km/h.
+    // OpenWeather's metric wind speed is in metres per second.
 
-    document.getElementById("wind-value").textContent =
-        current.wind_speed_10m;
+    windValue.textContent =
+        Math.round((data.wind?.speed || 0) * 3.6 * 10) / 10;
 
 
     // Display wind direction.
 
-    const windDirectionElement =
-        document.getElementById("wind-direction");
-
-    if (current.wind_direction_10m !== undefined) {
-
-        windDirectionElement.textContent =
-            `${current.wind_direction_10m}°`;
-
+    if (data.wind && data.wind.deg !== undefined) {
+        windDirection.textContent = `${data.wind.deg}°`;
     } else {
-
-        windDirectionElement.textContent =
-            "Unavailable";
-
+        windDirection.textContent = "Unavailable";
     }
 
 
     // Display precipitation.
+    // Rain and snow amounts are reported when available.
 
-    document.getElementById("precipitation-value").textContent =
-        current.precipitation;
+    const rainAmount = data.rain?.["1h"] || 0;
+    const snowAmount = data.snow?.["1h"] || 0;
 
-
-    // Display local observation time.
-
-    document.getElementById("weather-local-time").textContent =
-        `Local observation time: ${current.time.replace("T", " ")}`;
+    precipitationValue.textContent =
+        Math.round((rainAmount + snowAmount) * 10) / 10;
 
 
-    // Display the weather data source.
+    // Display the observation time.
 
-    const weatherSource =
-        document.getElementById("weather-source");
-
-    if (weatherSource) {
-        weatherSource.textContent =
-            "Weather data provided by Open-Meteo.";
-    }
+    weatherLocalTime.textContent =
+        `Local observation time: ${getLocalObservationTime(data)}`;
 
 
-    // SWITCH TO THE SECOND INTERFACE.
+    // Update the data source credit.
+
+    weatherSource.textContent =
+        "Weather data provided by OpenWeather.";
+
+
+    // IMPORTANT: SWITCH TO THE RESULTS INTERFACE.
 
     homeScreen.hidden = true;
     weatherScreen.hidden = false;
 
 
-    // Clear the previous search message.
+    // Clear the search message.
 
     searchMessage.textContent = "";
 
 
-    // Start the results page at the top.
+    // Move to the top of the results interface.
 
     window.scrollTo({
         top: 0,
@@ -286,14 +278,14 @@ function displayWeather(place, weatherData) {
 
 weatherForm.addEventListener("submit", async function (event) {
 
-    // Prevent the form from refreshing the page.
+    // Prevent the browser from refreshing the page.
 
     event.preventDefault();
 
     const city = cityInput.value.trim();
 
 
-    // Check whether the user entered a city.
+    // Validate the city input.
 
     if (!city) {
 
@@ -306,12 +298,24 @@ weatherForm.addEventListener("submit", async function (event) {
     }
 
 
-    // Prevent repeated clicks while loading.
+    // Check whether the API key placeholder was replaced.
+
+    if (
+        !API_KEY ||
+        API_KEY === "PASTE_YOUR_OPENWEATHER_API_KEY_HERE"
+    ) {
+
+        searchMessage.textContent =
+            "Please configure your OpenWeather API key first.";
+
+        return;
+    }
+
+
+    // Show the loading state.
 
     searchButton.disabled = true;
-
-    searchButton.textContent =
-        "Finding your sky...";
+    searchButton.textContent = "Finding your sky...";
 
     searchMessage.textContent =
         "Searching the sky above you...";
@@ -319,29 +323,18 @@ weatherForm.addEventListener("submit", async function (event) {
 
     try {
 
-        // First, find the city.
+        // Retrieve the city's current weather.
 
-        const place = await findCity(city);
-
-
-        // Second, fetch its current weather.
-
-        const weatherData = await getWeather(
-            place.latitude,
-            place.longitude
-        );
+        const weatherData = await getWeather(city);
 
 
-        // Third, display the results.
+        // Display the results and switch interfaces.
 
-        displayWeather(place, weatherData);
+        displayWeather(weatherData);
 
     } catch (error) {
 
-        console.error(
-            "Dreamy Weather error:",
-            error
-        );
+        console.error("Dreamy Weather error:", error);
 
         searchMessage.textContent =
             error.message ||
@@ -352,9 +345,7 @@ weatherForm.addEventListener("submit", async function (event) {
         // Restore the search button.
 
         searchButton.disabled = false;
-
-        searchButton.textContent =
-            "Find My Sky ↗";
+        searchButton.textContent = "Find My Sky ↗";
     }
 
 });
@@ -364,20 +355,11 @@ weatherForm.addEventListener("submit", async function (event) {
 
 backButton.addEventListener("click", function () {
 
-    // Return to the home interface.
-
     weatherScreen.hidden = true;
     homeScreen.hidden = false;
 
-
-    // Clear the previous search.
-
     cityInput.value = "";
-
     searchMessage.textContent = "";
-
-
-    // Return to the top of the page.
 
     window.scrollTo({
         top: 0,
@@ -401,3 +383,8 @@ homeLink.addEventListener("click", function (event) {
     searchMessage.textContent = "";
 
 });
+
+
+// 10. CONFIRM THAT THE JAVASCRIPT HAS LOADED
+
+console.log("Dreamy Weather JavaScript loaded successfully.");
