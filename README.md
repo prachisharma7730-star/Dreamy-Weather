@@ -41,8 +41,6 @@ git clone https://github.com/prachisharma7730-star/Dreamy-Weather.git
 cd Dreamy-Weather
 ```
 
-Open `index.html` in your browser. To use your own API key, get one free from OpenWeather and add it in the JavaScript file where the API key is defined.
-
 ## Credits
 
 Weather data by [OpenWeather](https://openweathermap.org/).
